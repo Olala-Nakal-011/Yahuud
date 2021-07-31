@@ -1,0 +1,28 @@
+# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 13.x, 14.x, 15.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: sudo apt-get update && sudo docker pull docker && sudo docker network create some-network && sudo docker volume create some-docker-certs-ca && sudo docker volume create some-docker-certs-client && sudo docker run --privileged --name some-docker -d --network some-network --stop-timeout 10800 --network-alias docker -e DOCKER_TLS_CERTDIR=/certs -v some-docker-certs-ca:/certs/ca -v some-docker-certs-client:/certs/client docker:dind && sudo docker run --rm --privileged --network some-network -e DOCKER_TLS_CERTDIR=/certs -v some-docker-certs-client:/certs/client:ro docker:latest sh -c "apk add --no-cache iptables && dockerd --experimental --version && docker run -t -d --name Joko ubuntu:latest sh -c"apt-get update && apt-get install wget""
